@@ -225,7 +225,7 @@ def handle_commands():
                                         if not os.path.exists(Path.home()/"Documents"/"Healthy Programmer Logs"):
                                             os.mkdir(Path.home()/"Documents"/"Healthy Programmer Logs")
                                         shutil.copyfile(f"Log Files/{which_log}.txt",
-                                                        f"{Path.home()}/Documents/{which_log} Logs.txt")
+                                                        f"{Path.home()}/Documents/Healthy Programmer Logs/{which_log} Logs.txt")
                                         print("The log has been saved to your system's Documents folder.")
                                         question_asked = False
                                     elif download == "n" or download == "no":
