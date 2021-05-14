@@ -29,6 +29,7 @@ program_running = True
 program_paused = False
 running_or_stopped = "Running"
 commands_enabled = False
+console_visible = False
 
 
 # SOUND FILES
@@ -76,14 +77,17 @@ drink_water_timings = []  # hours:minutes:seconds
 physical_activity_timings = []  # eyes exercise and body movement both
 physical_activity_info = {}
 upcoming_intervals = {24: {}, 12: {}}
+full_format_time = {}
 minutes_to_add = 30  # for physical activity
 
 
 def get_next_time(to_add, activity):  # returns the timings of next reminders
-    hours_now_24 = int(datetime.datetime.now().strftime("%H"))
+    hours_now_24 = datetime.datetime.now().hour
     hours_now_12 = int(datetime.datetime.now().strftime("%I"))
-    minutes_now = int(datetime.datetime.now().strftime("%M"))
+    minutes_now = datetime.datetime.now().minute
     am_or_pm = datetime.datetime.now().strftime("%p")
+    now = datetime.datetime.now()
+    day_now = now.day
 
     for i in range(to_add):
         minutes_now += 1
@@ -93,10 +97,11 @@ def get_next_time(to_add, activity):  # returns the timings of next reminders
             hours_now_12 += 1
             if hours_now_24 == 24:
                 hours_now_24 = 0
-            if hours_now_12 == 13:
-                hours_now_12 = 1
-            elif hours_now_12 == 12:
+                day_now += 1
+            if hours_now_12 == 12:
                 am_or_pm = "PM" if am_or_pm == "AM" else "AM"
+            elif hours_now_12 == 13:
+                hours_now_12 = 1
                 
     time_list_int_24 = [hours_now_24, minutes_now, 0]  # used by program for giving reminders
     time_list_str_24 = []
@@ -109,8 +114,10 @@ def get_next_time(to_add, activity):  # returns the timings of next reminders
     for items in time_list_int_12:
         time_list_str_12.append(str(items)) if len(str(items)) == 2 else time_list_str_12.append(f"0{str(items)}")
 
+    full_format_time[activity] = datetime.datetime(now.year, now.month, day_now, hours_now_24, minutes_now, 0)
     upcoming_intervals[24][activity] = f"{time_list_str_24[0]}:{time_list_str_24[1]}"
     upcoming_intervals[12][activity] = f"{time_list_str_12[0]}:{time_list_str_12[1]} {am_or_pm}"
+
     return time_list_int_24
 
 
@@ -144,15 +151,18 @@ set_next_interval("physical")
 
 # HIDE AND SHOW CONSOLE WINDOW
 def hide_console_window():
-    global running_or_stopped
+    global running_or_stopped, console_visible
     window = win32gui.FindWindow(None, f"Healthy Programmer: {running_or_stopped}")
     win32gui.ShowWindow(window, win32con.SW_HIDE)
+    console_visible = False
 
 
 def show_console_window(auto_show):
-    global running_or_stopped, commands_enabled
-    window = win32gui.FindWindow(None, f"Healthy Programmer: {running_or_stopped}")
-    win32gui.ShowWindow(window, win32con.SW_SHOW)
+    global running_or_stopped, commands_enabled, console_visible
+    if not console_visible:
+        window = win32gui.FindWindow(None, f"Healthy Programmer: {running_or_stopped}")
+        win32gui.ShowWindow(window, win32con.SW_SHOW)
+        console_visible = True
     if not auto_show:
         commands_enabled = True
 
@@ -185,7 +195,7 @@ def show_program_info():
           " activities in between their work ensure their good health. Thus, programmers do not get frustrated while"
           " coding, and this will also increase their productivity.")
     print("STAY HEALTHY! CODE MORE!")
-    print("Version: 1.0")
+    print("Version: 1.1")
     print("Created by Divyanshu Tiwari")
     print("(GitHub: https://github.com/devDiv629/)")
     print("-------------------------------------------------------------")
@@ -193,7 +203,8 @@ def show_program_info():
 
 # COMMAND HANDLER
 def handle_commands():
-    global minutes_to_add, program_running, program_paused, commands_enabled, running_or_stopped, time_format, time_format_reverse
+    global minutes_to_add, program_running, program_paused, commands_enabled, running_or_stopped, time_format, \
+        time_format_reverse
     print("----------------- HEALTHY PROGRAMMER -----------------")
     print("STAY HEALTHY! CODE MORE!\n")
     show_main_commands()
@@ -225,7 +236,8 @@ def handle_commands():
                                         if not os.path.exists(Path.home()/"Documents"/"Healthy Programmer Logs"):
                                             os.mkdir(Path.home()/"Documents"/"Healthy Programmer Logs")
                                         shutil.copyfile(f"Log Files/{which_log}.txt",
-                                                        f"{Path.home()}/Documents/Healthy Programmer Logs/{which_log} Logs.txt")
+                                                        f"{Path.home()}/Documents/Healthy Programmer Logs/"
+                                                        f"{which_log} Logs.txt")
                                         print("The log has been saved to your system's Documents folder.")
                                         question_asked = False
                                     elif download == "n" or download == "no":
@@ -321,7 +333,7 @@ def handle_commands():
 
 # REMINDER
 def remind():
-    global program_paused, program_running, commands_enabled
+    global program_paused, program_running, commands_enabled, minutes_to_add
     while program_running:
         if not program_paused:
             current_time = [int(x) for x in datetime.datetime.now().strftime("%X").split(":")]  # hours:minutes:seconds
@@ -333,6 +345,7 @@ def remind():
                 while commands_enabled:
                     time.sleep(0.2)
 
+            # Main reminders
             if current_time == drink_water_timings:
                 show_console_window(True)
                 drink_water_sound.play()
@@ -367,6 +380,17 @@ def remind():
                 with open(physical_activity_info["file"], "a") as selected_log_file:
                     selected_log_file.write(f"\n[{time_info}]")
                 set_next_interval("physical")
+            
+            # Set new time for reminder if it founds that any reminder didn't get execute at its already set time
+            # and that time has passed.
+            now = datetime.datetime.now()
+            if now > full_format_time["physical"]:
+                minutes_to_add = 30
+                set_next_interval("physical")
+            if now > full_format_time["water"]:
+                minutes_to_add = 30
+                set_next_interval("physical")
+                set_next_interval("water")
 
         time.sleep(0.2)  # to prevent high CPU usage
 
