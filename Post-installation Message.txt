@@ -1,0 +1,11 @@
+Thanks for installing Healthy Programmer!
+
+----------------------
+Healthy Programmer is added to your system's Startup items. Now, it will start automatically when you log in onto your system. You can use the Ctrl+Alt+Z shortcut to reveal the console window of Healthy Programmer.
+
+Note: When Healthy Programmer starts, a console window appears and disappears suddenly. You can ignore it. This is just the startup of Healthy Programmer.
+-----------------------
+
+If you face any problem, you can report it on GitHub repository of this program (https://github.com/devDiv629/Healthy-Programmer). Any suggestions are also welcome.
+
+>> Created by Divyanshu Tiwari
