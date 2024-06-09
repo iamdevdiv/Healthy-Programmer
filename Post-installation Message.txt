@@ -6,6 +6,6 @@ Healthy Programmer is added to your system's Startup items. Now, it will start a
 Note: When Healthy Programmer starts, a console window appears and disappears suddenly. You can ignore it. This is just the startup of Healthy Programmer.
 -----------------------
 
-If you face any problem, you can report it on GitHub repository of this program (https://github.com/devDiv629/Healthy-Programmer). Any suggestions are also welcome.
+If you face any problem, you can report it on GitHub repository of this program (https://github.com/iamdevdiv/Healthy-Programmer). Any suggestions are also welcome.
 
 >> Created by Divyanshu Tiwari

@@ -39,7 +39,7 @@ eyes_exercise_sound = mixer.Sound("Sounds/eyes_exercise.mp3")
 
 
 # PROGRAM FILES RELATED OPERATIONS
-if not os.path.exists(f"Path.home()/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+if not os.path.exists(f"{Path.home()}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
                       f"/Startup/Healthy Programmer.ink"):  # adding program to startup items
     shell = Dispatch('WScript.shell')
     shortcut = shell.createShortcut(os.path.join(Path.home(), "AppData", "Roaming", "Microsoft", "Windows",
@@ -198,7 +198,7 @@ def show_program_info():
     print("STAY HEALTHY! CODE MORE!")
     print("Version: 1.1")
     print("Created by Divyanshu Tiwari")
-    print("(GitHub: https://github.com/devDiv629/)")
+    print("(GitHub: https://github.com/iamdevdiv/)")
     print("-------------------------------------------------------------")
 
 
@@ -321,7 +321,7 @@ def handle_commands():
                     else:
                         print("No such command found! Try again...")
             elif command == "source()":
-                webbrowser.open("https://github.com/devDiv629/Healthy-Programmer")
+                webbrowser.open("https://github.com/iamdevdiv/Healthy-Programmer")
             elif command == "kill()":
                 print("Healthy Programmer must be stopped before being killed! Use stop() to stop it.")
             elif command == "":
